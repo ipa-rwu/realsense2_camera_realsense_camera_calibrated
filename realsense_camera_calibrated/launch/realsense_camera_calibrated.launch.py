@@ -90,15 +90,15 @@ def launch_setup(context, params):
         package="tf2_ros",
         executable="static_transform_publisher",
         arguments=[
-            LaunchConfiguration(params["translation_x"]).perform(context),
-            LaunchConfiguration(params["translation_y"]).perform(context),
-            LaunchConfiguration(params["translation_z"]).perform(context),
-            LaunchConfiguration(params["rotation_x"]).perform(context),
-            LaunchConfiguration(params["rotation_y"]).perform(context),
-            LaunchConfiguration(params["rotation_z"]).perform(context),
-            LaunchConfiguration(params["rotation_w"]).perform(context),
-            LaunchConfiguration(params["child_frame_id"]).perform(context),
-            LaunchConfiguration(params["frame_id"]).perform(context),
+            LaunchConfiguration("translation_x"),
+            LaunchConfiguration("translation_y"),
+            LaunchConfiguration("translation_z"),
+            LaunchConfiguration("rotation_x"),
+            LaunchConfiguration("rotation_y"),
+            LaunchConfiguration("rotation_z"),
+            LaunchConfiguration("rotation_w"),
+            LaunchConfiguration("child_frame_id"),
+            LaunchConfiguration("frame_id"),
         ],
     )
     return [realsence_tf_node]
@@ -110,22 +110,12 @@ def generate_launch_description():
             PathJoinSubstitution(
                 [FindPackageShare("realsense2_camera"), "launch", "rs_launch.py"]
             )
-        ),
-        launch_arguments={
-            "device_type": "d435",
-            "depth_width": 640,
-            "depth_height": 480,
-            "depth_fps": 30.0,
-            "infra1_width": 640,
-            "infra1_height": 480,
-            "infra1_fps": 30.0,
-            "publish_tf": "false",
-        }.items(),
+        )
     )
 
-    ld = LaunchDescription(declare_configurable_parameters(configurable_parameters))
-
-    ld.add_action(realsence_launch)
+    entites = declare_configurable_parameters(configurable_parameters)
+    entites.append(realsence_launch)
+    ld = LaunchDescription(entites)
 
     ld.add_action(
         OpaqueFunction(
